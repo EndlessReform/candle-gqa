@@ -7,10 +7,8 @@
 // Core repeat_kv function template for standard types
 template<typename T>
 __device__ void repeat_kv(
-    const T* key_states, 
-    const T* value_states,
-    T* repeated_keys,
-    T* repeated_values,
+    const T* states, 
+    T* repeated_states,
     const int n_local_heads,
     const int n_repeats,
     const int seqlen,
@@ -25,22 +23,25 @@ __device__ void repeat_kv(
     int expanded_head_idx = head_idx * n_repeats + rep_idx;
     int output_offset = expanded_head_idx * seqlen * head_dim + seq_idx * head_dim + dim_idx;
 
-    repeated_keys[output_offset] = key_states[input_offset];
-    repeated_values[output_offset] = value_states[input_offset];
+    repeated_states[output_offset] = states[input_offset];
+    // repeated_states[output_offset] = static_cast<T>(1);  // Set all elements to 1 as a test
 }
+
+    // const T* value_states,
+    // const TYPENAME *value_states,    
+    // T* repeated_values,
+    // TYPENAME *repeated_values,       
 
 // Macro to define repeat_kv kernel for each type
 #define REPEAT_KV_OP(TYPENAME, FN_NAME) \
 extern "C" __global__ void FN_NAME( \
-    const TYPENAME *key_states,      \
-    const TYPENAME *value_states,    \
-    TYPENAME *repeated_keys,         \
-    TYPENAME *repeated_values,       \
+    const TYPENAME *states,      \
+    TYPENAME *repeated_states,       \
     const int n_local_heads,         \
     const int n_repeats,             \
     const int seqlen,                \
     const int head_dim) {            \
-    repeat_kv(key_states, value_states, repeated_keys, repeated_values, n_local_heads, n_repeats, seqlen, head_dim); \
+    repeat_kv(states, repeated_states, n_local_heads, n_repeats, seqlen, head_dim); \
 }
 
 REPEAT_KV_OP(float, repeat_kv_f32)
