@@ -1,0 +1,12 @@
+[package]
+name = "candle-gqa-ops"
+version.workspace = true
+
+[dependencies]
+candle-core = "0.7.2"
+candle-gqa-kernels = { workspace = true, optional = true }
+
+[features]
+default = []
+cuda = ["candle-core/cuda", "dep:candle-gqa-kernels"]
+metal = ["candle-core/metal"]
