@@ -8,9 +8,10 @@ name = "candle_gqa_ops"
 path = "lib/lib.rs"
 
 [dependencies]
-candle-core = { version = "0.7.2", package = "candle-core", features = [
-    "cuda",
-] }
+#candle-core = { version = "0.7.2", package = "candle-core", features = [
+#    "cuda",
+#] }
+candle-core = { git = "https://github.com/huggingface/candle.git", rev = "0d96ec31e8be03f844ed0aed636d6217dee9c7bc", features = ["cuda"] }
 candle-gqa-kernels = { path = "../candle-gqa-kernels" }
 
 [features]
